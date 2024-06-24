@@ -1,0 +1,17 @@
+name: Build and Push Image
+on:
+  workflow_dispatch:
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Image
+        run: docker build . --file Dockerfile --tag ghcr.io/llinsbauer/latex
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io --username ${{ github.actor }} --password-stdin
+      - name: Push Image
+        run: docker push ghcr.io/llinsbauer/latex
